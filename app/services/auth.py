@@ -5,6 +5,7 @@ from app.models.user import User
 from app.schemas.user import UserCreate
 from app.db.session import SessionLocal
 from sqlalchemy.orm import Session
+from app.core.security import verify_password, get_password_hash, create_access_token
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
