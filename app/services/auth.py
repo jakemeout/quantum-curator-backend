@@ -6,6 +6,8 @@ from app.schemas.user import UserCreate
 from app.db.session import SessionLocal
 from sqlalchemy.orm import Session
 from app.core.security import verify_password, get_password_hash, create_access_token
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from app.core.config import settings
 
 SECRET_KEY = "your_secret_key"
 ALGORITHM = "HS256"
@@ -29,7 +31,7 @@ def authenticate_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
     if not user:
         return False
-    if not verify_password(password, user.password_hash):
+    if not verify_password(password, user.password_hash): # type: ignore
         return False
     return user
 
@@ -39,3 +41,15 @@ def create_user(db: Session, user: UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def generate_password_reset_token(email: str) -> str:
+    serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+    return serializer.dumps(email, salt=settings.SECRET_KEY)
+
+def verify_password_reset_token(token: str, expiration: int = 3600) -> str:
+    serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+    try:
+        email = serializer.loads(token, salt=settings.SECRET_KEY, max_age=expiration)
+    except (SignatureExpired, BadSignature):
+        return None # type: ignore
+    return email
