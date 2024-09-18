@@ -1,10 +1,20 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
+from typing import Optional
 
-class Product(BaseModel):
-    id: int
+class ProductBase(BaseModel):
     name: str
-    description: str
-    affiliate_link: str
+    description: Optional[str] = None
+    price: float
+    affiliate_link: Optional[HttpUrl] = None
+
+class ProductCreate(ProductBase):
+    pass
+
+class ProductUpdate(ProductBase):
+    pass
+
+class Product(ProductBase):
+    id: int
 
     class Config:
         orm_mode = True

@@ -1,10 +1,15 @@
 from app.db.session import SessionLocal
-from app.models.product import Product
 from app.services.product_generation import add_product  # Assuming you put the add_product function in services/product.py
-import sys 
-import os 
+import os
+import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Get the absolute path of the project's root directory
+project_root = os.path.dirname(os.path.abspath(__file__))
+
+# Add the project root to the Python path
+sys.path.append(project_root)
+
+
 def seed_products():
     db = SessionLocal()
 
