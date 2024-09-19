@@ -5,7 +5,7 @@
     "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskRole",
     "containerDefinitions": [
         {
-            "name": "quantum-core-container",
+            "name": "quantum-core-backend",
             "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/quantum-core-backend:latest",
             "essential": true,
             "portMappings": [
