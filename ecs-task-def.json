@@ -53,7 +53,5 @@
         "FARGATE"
     ],
     "cpu": "256",
-    "memory": "512",
-    "executionRolePermissions": [
-    ]
+    "memory": "512"
 }
