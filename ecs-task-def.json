@@ -6,7 +6,7 @@
     "containerDefinitions": [
         {
             "name": "quantum-core-backend",
-            "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/quantum-core-backend:latest",
+            "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/quantum-core-backend:${GITHUB_SHA}",
             "essential": true,
             "portMappings": [
                 {
@@ -35,7 +35,7 @@
             "secrets": [
                 {
                     "name": "DB_PASSWORD",
-                    "valueFrom": "arn:aws:secretsmanager:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_ID}:secret:rds!db-9d859947-9a40-4e50-8a96-2369c70f3397.password"
+                    "valueFrom": "arn:aws:secretsmanager:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_ID}:secret:rds!db-9d859947-9a40-4e50-8a96-2369c70f3397.password:AWSCURRENT"
                 }
             ],
             "logConfiguration": {
@@ -43,7 +43,8 @@
                 "options": {
                     "awslogs-group": "/ecs/fastapi-service",
                     "awslogs-region": "${AWS_DEFAULT_REGION}",
-                    "awslogs-stream-prefix": "ecs"
+                    "awslogs-stream-prefix": "ecs",
+                    "awslogs-retention": "30"
                 }
             }
         }
@@ -52,5 +53,10 @@
         "FARGATE"
     ],
     "cpu": "256",
-    "memory": "512"
+    "memory": "512",
+    "executionRolePermissions": [
+        "secretsmanager:GetSecretValue",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+    ]
 }
