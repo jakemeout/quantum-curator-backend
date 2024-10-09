@@ -55,8 +55,5 @@
     "cpu": "256",
     "memory": "512",
     "executionRolePermissions": [
-        "secretsmanager:GetSecretValue",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
     ]
 }
