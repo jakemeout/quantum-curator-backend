@@ -4,6 +4,10 @@ from app.core.config import settings
 
 app = FastAPI()
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(products.router, prefix="/products", tags=["products"])
 app.include_router(favorites.router, prefix="/favorites", tags=["favorites"])
