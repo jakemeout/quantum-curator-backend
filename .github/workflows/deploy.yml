@@ -45,6 +45,12 @@ jobs:
           registry-type: private
           mask-password: true
 
+      - name: Get AWS account ID
+        id: get-aws-account
+        run: |
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "account_id=${AWS_ACCOUNT_ID}" >> $GITHUB_OUTPUT
+
       - name: Build, tag, and push image to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -54,10 +60,28 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Process task definition
+        run: |
+          # Replace variables in task definition
+          sed -i "s/\${AWS_ACCOUNT_ID}/${{ steps.get-aws-account.outputs.account_id }}/g" ecs-task-def.json
+          sed -i "s/\${AWS_DEFAULT_REGION}/us-east-1/g" ecs-task-def.json
+          sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" ecs-task-def.json
+          sed -i "s/\${DB_HOST}/${{ secrets.DB_HOST }}/g" ecs-task-def.json
+          sed -i "s/\${DB_NAME}/${{ secrets.DB_NAME }}/g" ecs-task-def.json
+          sed -i "s/\${DB_USER}/${{ secrets.DB_USER }}/g" ecs-task-def.json
+
+      - name: Fill in the new task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ecs-task-def.json
+          container-name: quantum-core-backend
+          image: ${{ steps.login-ecr.outputs.registry }}/quantum-core-backend:${{ github.sha }}
+
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ecs-task-def.json
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: quantum-curator-api-service
           cluster: quantum-curator-api-cluster
           wait-for-service-stability: true
