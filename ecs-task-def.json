@@ -35,7 +35,7 @@
             "secrets": [
                 {
                     "name": "DB_PASSWORD",
-                    "valueFrom": "arn:aws:secretsmanager:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_ID}:secret:rds!db-9d859947-9a40-4e50-8a96-2369c70f3397.password:AWSCURRENT"
+                    "valueFrom": "arn:aws:secretsmanager:${AWS_DEFAULT_REGION}:${AWS_ACCOUNT_ID}:secret:rds!db-030d5086-ab0a-4d38-a9e3-b95c75e4fb7d:password::"
                 }
             ],
             "logConfiguration": {
