@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -23,8 +23,11 @@ RUN poetry install --no-interaction --no-ansi --verbose
 # Copy application code
 COPY . .
 
+# Debug: List files in /app
+RUN ls -la /app
+
 # Expose port
 EXPOSE 8000
 
-# Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to run the application with more verbose output
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug"]
