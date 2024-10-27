@@ -43,8 +43,7 @@
                 "options": {
                     "awslogs-group": "/ecs/quantum-curator-api-service",
                     "awslogs-region": "${AWS_DEFAULT_REGION}",
-                    "awslogs-stream-prefix": "ecs",
-                    "awslogs-retention": "30"
+                    "awslogs-stream-prefix": "ecs"
                 }
             }
         }
